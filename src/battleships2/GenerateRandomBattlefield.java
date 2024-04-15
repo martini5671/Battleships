@@ -1,8 +1,20 @@
 package battleships2;
 
+import java.awt.*;
 import java.util.*;
 
 public class GenerateRandomBattlefield {
+    private char[][] battlefield_with_ships;
+    private ArrayList<Point> five_s_ship;
+    private ArrayList<Point> four_s_ship;
+    private ArrayList<Point> three_s_ship;
+    private ArrayList<Point> three_s_ship2;
+    private ArrayList<Point> two_s_ship;
+
+    GenerateRandomBattlefield()
+    {
+    }
+
     public static char[][] GenerateBattlefield() {
         // Declaration of 2D array
         char[][] battlefield = new char[12][12];
@@ -103,6 +115,7 @@ public class GenerateRandomBattlefield {
                         for (int j = 0; j < ship_row_indexes.size(); j++) {
                             battlefield[ship_row_indexes.get(j)][ship_column_indexes.get(j)] = 'O';
                         }
+
                         do_while_cond = false;
                         break;
                     } else {
@@ -147,7 +160,8 @@ public class GenerateRandomBattlefield {
     // ArePointsOfShipOnTheBoard
     public static boolean ValidateShipPlacement(ArrayList<Integer> rows, ArrayList<Integer> columns, char[][] battlefield)
     {
-        return ArePointsOfShipOnTheBoard(rows, columns) && IsSurroundingAvailable(rows, columns, battlefield) && ArePointsNotOccupiedByOtherShip(rows, columns, battlefield);
+        return ArePointsOfShipOnTheBoard(rows, columns) && IsSurroundingAvailable(rows, columns, battlefield) &&
+                ArePointsNotOccupiedByOtherShip(rows, columns, battlefield);
     }
 
     public static boolean ArePointsNotOccupiedByOtherShip(ArrayList<Integer> rows, ArrayList<Integer> columns, char[][]battlefield)
