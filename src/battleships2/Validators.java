@@ -4,7 +4,7 @@ import java.awt.*;
 import java.util.*;
 
 public class Validators {
-    public static boolean validateShipPlacement(ArrayList<Integer> rows, ArrayList<Integer> columns, char[][] battlefield)
+    public static boolean validateShipPlacementForEnemy(ArrayList<Integer> rows, ArrayList<Integer> columns, char[][] battlefield)
     {
         return arePointsOfShipOnTheBoard(rows, columns) &&
                 isSurroundingAvailable(rows, columns, battlefield) &&

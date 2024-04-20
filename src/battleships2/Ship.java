@@ -36,11 +36,15 @@ public class Ship {
     public void addShipCoordinates(Point Coordinates) {
         ShipCoordinates.add(Coordinates);
     }
+    public void addShipCoordinates(ArrayList<Point> coordinatesList) {
+        ShipCoordinates.addAll(coordinatesList);
+    }
     public Point takeHit(Point Coordinates)
     {
         Point point_to_remove = new Point(-1,-1);
         for(Point point: ShipCoordinates)
         {
+            //  cant find local variable point
             if(point.x == Coordinates.x && point.y == Coordinates.y)
             {
                 System.out.println("You hit the " + ShipName + " (" + ShipLength + " blocks)");
