@@ -1,13 +1,21 @@
 package battleships2;
 
+import testsandstuff.AudioPlayer;
+import Audio.AudioPlayer2;
+
 import java.awt.*;
 import java.util.*;
 
 public class Battlefield {
+    AudioPlayer audioPlayer = new AudioPlayer();
+    public int counter_loops;
     private char[][] Battlefield = new char[12][12];
+
+    private char[][] GameplayBattlefield = new char[12][12];
     private ArrayList<Ship> ShipsArray = new ArrayList<>();
     // ships
     public Battlefield(boolean is_player_battlefield) {
+        this.GameplayBattlefield = generateEmptyBattlefield();
         this.ShipsArray.add(new Ship(5));
         this.ShipsArray.add(new Ship(4));
         this.ShipsArray.add(new Ship(3));
@@ -60,9 +68,42 @@ public class Battlefield {
 
         return battlefield;
     }
-    public void displayBattlefieldWithShips() {
-        System.out.println(Arrays.deepToString(this.Battlefield).replace("], ", "]\n").
-                replace("[[", "[").replace("]]", "]"));
+    public void displayFullBattlefield() {
+        System.out.println(" ");
+        for (int i = 0; i < 12; i++) {
+            for (int j = 0; j < 12; j++) {
+                System.out.print(this.Battlefield[i][j] + " ");
+            }
+            System.out.println();
+        }
+        System.out.println(" ");
+    }
+    public void displayGameplayBattlefield() {
+        System.out.println(" ");
+        for (int i = 0; i < 12; i++) {
+            for (int j = 0; j < 12; j++) {
+                System.out.print(this.GameplayBattlefield[i][j] + " ");
+            }
+            System.out.println();
+        }
+        System.out.println(" ");
+    }
+
+    public static void displayTwoBattlefields(char[][] this_battlefield,char[][] other_battlefield) {
+        System.out.println("   Your battlefield\t\t\t\t Enemie's battlefield");
+        for (int i = 0; i < 12; i++) {
+            for (int j = 0; j < 12; j++) {
+                System.out.print(this_battlefield[i][j] + " ");
+            }
+            System.out.print("\t\t");
+            for (int j = 0; j < 12; j++) {
+                System.out.print(other_battlefield[i][j] + " ");
+            }
+            System.out.println();
+        }
+        System.out.println();
+        System.out.println("Legend: ocean = ~ | ship = O | destroyed cell of ship = X | missed shot = M");
+        System.out.println();
     }
     public void displayShipsNamesAndTheirCoordinates()
     {
@@ -72,6 +113,16 @@ public class Battlefield {
             ship.printShipCoordinates();
         }
     }
+    public int getAllShipsLength()
+    {
+        int sum_segments = 0;
+        for(Ship ship: ShipsArray)
+        {
+            sum_segments = sum_segments + ship.getShipCoordinates().size();
+        }
+        return sum_segments;
+    }
+
     private void setShipCoordinates() {
         HashMap<Integer, String> command_output = new HashMap<>();
         command_output.put(0, "first");
@@ -96,6 +147,8 @@ public class Battlefield {
                             " using following format: row index + column index (A1,A3,B7 ...)");
 
                     String userCoordinate = scanner.nextLine();
+                    //validate usercoordinate
+
                     // Split chars:
                     char row_input = userCoordinate.charAt(0);
                     char column_input = userCoordinate.charAt(1);
@@ -111,7 +164,7 @@ public class Battlefield {
                     for (int i = 0; i < array_rows.size(); i++) {
                         Battlefield[array_rows.get(i)][array_columns.get(i)] = 'O';
                     }
-                    displayBattlefieldWithShips();
+                    displayFullBattlefield();
                     validCoordinates = true;
                 } else {
                     System.out.println("Something is wrong with your coordinates! Try again.");
@@ -121,7 +174,7 @@ public class Battlefield {
         }
     }
 
-    private Point translateBoardCoordinatesToPointCoordinates(char row_index, char column_index)
+    public static Point translateBoardCoordinatesToPointCoordinates(char row_index, char column_index)
     {
         int char_ascii = 65;
         int number_ascii = 48;
@@ -142,29 +195,47 @@ public class Battlefield {
 
     }
 
-
     public char[][] getBattlefield() {
         return Battlefield;
     }
 
-    public void receiveHit(char row_index, char column_index)
+    public void receiveHit(char row_index, char column_index, boolean printMessage)
     {
+        AudioPlayer2 audioPlayer2 = new AudioPlayer2();
         Point shot = translateBoardCoordinatesToPointCoordinates(row_index, column_index);
-        boolean cont = true;
+        boolean areAllShipsIntact = true;
+
         for (Ship ship : ShipsArray)
         {
-            Point shot_taken = ship.takeHit(shot);
+            if(ship.getShipCoordinates().isEmpty())
+            {
+                continue;
+            }
+            // print message parameter
+            Point shot_taken = ship.takeHit(shot, printMessage);
+            // check shots
             if(shot_taken.y != -1 && shot_taken.x != -1)
             {
+                // add coordinates
                 Battlefield[shot.x][shot.y] = 'X';
-                cont = false;
+                GameplayBattlefield[shot.x][shot.y] = 'X';
+                audioPlayer2.playHitSound();
+                areAllShipsIntact = false;
                 break;
             }
         }
-        if(cont)
+        if(areAllShipsIntact)
         {
-            System.out.println("You missed!!");
+            if(printMessage)
+            {
+                System.out.println("You missed!!");
+            }
+
+            // change board
             Battlefield[shot.x][shot.y]= 'M';
+            GameplayBattlefield[shot.x][shot.y] = 'M';
+            // play sound
+            audioPlayer2.playMissSound();
         }
     }
 
@@ -178,20 +249,14 @@ public class Battlefield {
 
     private void addRandomShips()
     {
-        // metoda get random start index ok
-        // metoda get random direction ok
-        // metoda add ship coordinates ok
-        // metoda validateAndPlaceShip
-
-        // 1. dla każdego statku wybieramy losowy punkt na mapie + losowy kierunek
-        // 2. na podstawie tego jaka jest długość statatku i kierunek wyliczamy kolejne punkty
-        // 3. walidacja: jeżeli ok to nadpisujemy plansze plus dodajemy koordynaty do każdego ze statków
-        // 3.b jeżeli nie jest ok to losujemy inny punkt na mapie i inny kierunek
         for (Ship ship: ShipsArray)
         {
             boolean repeate = true;
             while(repeate)
-            {// starting point + orientation
+            {
+                // count loop
+                counter_loops ++;
+                // starting point + orientation
                 Point random_starting_point = getRandomPointOnBoard();
                 char random_orientation = getRandomOrientation();
 
@@ -280,6 +345,8 @@ public class Battlefield {
         return resultMap;
     }
 
-
+    public char[][] getGameplayBattlefield() {
+        return GameplayBattlefield;
+    }
 
 }

@@ -16,10 +16,6 @@ public class Ship {
     };
 
     public Ship( int length) {
-        // Validate the input length
-        if (length < 2 || length > 5) {
-            throw new IllegalArgumentException("Invalid ship length. Must be between 2 and 5.");
-        }
         for (String[] shipsName : ships_names) {
             if (shipsName[1].equals(Integer.toString(length))) {
                 this.ShipName = shipsName[0];
@@ -39,7 +35,7 @@ public class Ship {
     public void addShipCoordinates(ArrayList<Point> coordinatesList) {
         ShipCoordinates.addAll(coordinatesList);
     }
-    public Point takeHit(Point Coordinates)
+    public Point takeHit(Point Coordinates, boolean printMessage)
     {
         Point point_to_remove = new Point(-1,-1);
         for(Point point: ShipCoordinates)
@@ -47,7 +43,11 @@ public class Ship {
             //  cant find local variable point
             if(point.x == Coordinates.x && point.y == Coordinates.y)
             {
-                System.out.println("You hit the " + ShipName + " (" + ShipLength + " blocks)");
+                if(printMessage)
+                {
+                    System.out.println("You hit the " + ShipName + " (" + ShipLength + " blocks)");
+                }
+
                 point_to_remove = point;
                 //remove destroyed part of the battleship
                 ShipCoordinates.remove(point);
@@ -56,7 +56,11 @@ public class Ship {
         }
         if(ShipCoordinates.isEmpty())
         {
-            System.out.println("You destroyed " + ShipName);
+            if(printMessage)
+            {
+                System.out.println("You destroyed " + ShipName);
+            }
+
         }
         return point_to_remove;
 
@@ -78,4 +82,7 @@ public class Ship {
         this.ShipCoordinates.clear();
     }
 
+    public ArrayList<Point> getShipCoordinates() {
+        return ShipCoordinates;
+    }
 }

@@ -37,6 +37,8 @@ public class Validators {
     public static boolean isSurroundingAvailable(ArrayList<Integer> rows, ArrayList<Integer> columns, char[][]battlefield)
     {
         boolean valid = true;
+        Collections.sort(rows);
+        Collections.sort(columns);
         if(Objects.equals(rows.get(0), rows.get(1))) // to znaczy że statek jest poziomo
         {
             // check above
@@ -54,11 +56,11 @@ public class Validators {
                 }
             }
             // check left and right
-            if(battlefield[rows.getFirst()][columns.getFirst() +1] == 'O')
+            if(battlefield[rows.getFirst()][columns.getFirst() -1] == 'O')
             {
                 valid = false;
             }
-            if(battlefield[rows.getFirst()][columns.getLast() - 1] == 'O')
+            if(battlefield[rows.getFirst()][columns.getLast() +1] == 'O')
             {
                 valid = false;
             }
@@ -80,13 +82,13 @@ public class Validators {
                     break;
                 }
             }
-            // check down
+            // check up
             if(battlefield[rows.getFirst() -1][columns.getFirst()] == 'O')
             {
                 valid = false;
             }
 
-            // check up
+            // check down
             if(battlefield[rows.getLast() +1][columns.getFirst()] == 'O')
             {
                 valid = false;
@@ -159,5 +161,32 @@ public class Validators {
 
     public static int concatenateIntegers(int a, int b) {
         return a * 10 + b;
+    }
+
+    public static String getValidCoordinatesInput(char[][] EnemyBattlefield) {
+        Scanner scanner = new Scanner(System.in);
+        String input = null;
+
+        while (true) {
+            System.out.println("Please provide coordinates of enemy's field which you want to attack:");
+            input = scanner.nextLine();
+
+            if (areValidCoordinates(input) && !isPointOnBoardAlreadyAttacked(input, EnemyBattlefield)) {
+                break;
+            } else {
+                System.out.println("Invalid input or already attacked field! Try again.");
+            }
+        }
+
+        return input;
+    }
+
+    public static boolean areValidCoordinates(String input) {
+        return input.length() == 2 && (input.charAt(0) >= 'A' && input.charAt(0) <= 'J') && (input.charAt(1) >= '0' && input.charAt(1) <= '9');
+    }
+
+    public static boolean isPointOnBoardAlreadyAttacked(String input, char[][] EnemyBattlefield) {
+        Point point = Battlefield.translateBoardCoordinatesToPointCoordinates(input.charAt(0), input.charAt(1));
+        return EnemyBattlefield[point.x][point.y] == 'M' || EnemyBattlefield[point.x][point.y] == 'X' ;
     }
 }
