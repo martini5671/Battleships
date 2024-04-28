@@ -163,7 +163,7 @@ public class Validators {
         return a * 10 + b;
     }
 
-    public static String getValidCoordinatesInput(char[][] EnemyBattlefield) {
+    public static String getValidCoordinatesToAttack(char[][] EnemyBattlefield) {
         Scanner scanner = new Scanner(System.in);
         String input = null;
 
@@ -180,6 +180,24 @@ public class Validators {
 
         return input;
     }
+
+    public static String getValidCoordinatesForClassInit() {
+        Scanner scanner = new Scanner(System.in);
+        String input = null;
+
+        while (true) {
+
+            input = scanner.nextLine();
+
+            if (areValidCoordinates(input)) {
+                break;
+            } else {
+                System.out.println("Invalid input! Please try again.");
+            }
+        }
+        return input;
+    }
+
 
     public static boolean areValidCoordinates(String input) {
         return input.length() == 2 && (input.charAt(0) >= 'A' && input.charAt(0) <= 'J') && (input.charAt(1) >= '0' && input.charAt(1) <= '9');

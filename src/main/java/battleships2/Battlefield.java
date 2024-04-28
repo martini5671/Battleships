@@ -1,13 +1,11 @@
 package battleships2;
 
-import testsandstuff.AudioPlayer;
 import Audio.AudioPlayer2;
 
 import java.awt.*;
 import java.util.*;
 
 public class Battlefield {
-    AudioPlayer audioPlayer = new AudioPlayer();
     public int counter_loops;
     private char[][] Battlefield = new char[12][12];
 
@@ -146,8 +144,8 @@ public class Battlefield {
                             " coordinate of the " + ship.getShipName() +
                             " using following format: row index + column index (A1,A3,B7 ...)");
 
-                    String userCoordinate = scanner.nextLine();
-                    //validate usercoordinate
+                    //get user coordinate and validate it
+                    String userCoordinate = Validators.getValidCoordinatesForClassInit();
 
                     // Split chars:
                     char row_input = userCoordinate.charAt(0);
