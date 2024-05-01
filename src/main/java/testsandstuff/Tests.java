@@ -1,49 +1,7 @@
 package testsandstuff;
 
-import battleships2.Battlefield;
-
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.io.PrintStream;
-
-// Java program to play an Audio
-// file using Clip Object
-import java.io.File;
-import java.io.IOException;
-import java.util.Scanner;
-
-import javax.sound.sampled.AudioInputStream;
-import javax.sound.sampled.AudioSystem;
-import javax.sound.sampled.Clip;
-import javax.sound.sampled.LineUnavailableException;
-import javax.sound.sampled.UnsupportedAudioFileException;
-
 public class Tests {
-    public static void main(String[] args) throws IOException, UnsupportedAudioFileException, LineUnavailableException {
-//        FileOutputStream fileOutputStream = new FileOutputStream("output.txt");
-//        PrintStream mainStream = new PrintStream(fileOutputStream);
-//
-//        PrintStream secondaryStream = System.out; // Use System.out for the secondary output stream
-//
-//        DualPrintStream dualPrintStream = new DualPrintStream(mainStream, secondaryStream);
-//
-//        System.setOut(dualPrintStream);
-//        System.out.println("Hello, World!");
-//        System.out.println("Hello, World!");
-//        System.out.println("Hello, World!");
-//        System.out.println("Hello, World!");
-//        dualPrintStream.close();
-
-        char[][] batllefield1 = generateEmptyBattlefield();
-        char[][] battledield2 = generateEmptyBattlefield();
-        displayTwoBattlefields(battledield2, batllefield1);
-        displayOneBattlefield(batllefield1);
-
-
-        for (int i = 0; i < 100; i++) {
-            Battlefield battlefield = new Battlefield(false);
-            battlefield.displayFullBattlefield();
-        }
+    public static void main(String[] args)  {
 
 
     }

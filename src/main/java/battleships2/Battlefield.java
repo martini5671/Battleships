@@ -11,6 +11,7 @@ public class Battlefield {
 
     private char[][] GameplayBattlefield = new char[12][12];
     private ArrayList<Ship> ShipsArray = new ArrayList<>();
+
     // ships
     public Battlefield(boolean is_player_battlefield) {
         this.GameplayBattlefield = generateEmptyBattlefield();
@@ -19,19 +20,17 @@ public class Battlefield {
         this.ShipsArray.add(new Ship(3));
         this.ShipsArray.add(new Ship(3));
         this.ShipsArray.add(new Ship(2));
-        if (is_player_battlefield)
-        {
+        if (is_player_battlefield) {
             this.Battlefield = generateEmptyBattlefield();
             setShipCoordinates();
 
-        }
-        else
-        {
+        } else {
             this.Battlefield = generateEmptyBattlefield();
             addRandomShips();
         }
 
     }
+
     private char[][] generateEmptyBattlefield() {
         // Declaration of 2D array
         char[][] battlefield = new char[12][12];
@@ -39,22 +38,19 @@ public class Battlefield {
         int char_ascii = 65;
         int number_ascii = 48;
 
-        for (int i = 0; i < battlefield.length ; i++) {
+        for (int i = 0; i < battlefield.length; i++) {
             for (int j = 0; j < battlefield.length; j++) {
-                if(j ==0 && i > 0 && i != 11)
-                {   // pionowo jest wstawiany alfabet
+                if (j == 0 && i > 0 && i != 11) {   // pionowo jest wstawiany alfabet
                     battlefield[i][j] = (char) char_ascii;
-                    battlefield[i][j+11] = (char) char_ascii;
+                    battlefield[i][j + 11] = (char) char_ascii;
                     char_ascii++;
                 }
-                if(i ==0 && j >0 && j!= 11)
-                {   //poziomo wstawiamy numery
+                if (i == 0 && j > 0 && j != 11) {   //poziomo wstawiamy numery
                     battlefield[i][j] = (char) number_ascii;
-                    battlefield[i+11][j] = (char) number_ascii;
+                    battlefield[i + 11][j] = (char) number_ascii;
                     number_ascii++;
                 }
-                if((i>0 && i <11)&&(j>0 && j<11 ))
-                {
+                if ((i > 0 && i < 11) && (j > 0 && j < 11)) {
                     battlefield[i][j] = '~';
                 }
             }
@@ -66,6 +62,7 @@ public class Battlefield {
 
         return battlefield;
     }
+
     public void displayFullBattlefield() {
         System.out.println(" ");
         for (int i = 0; i < 12; i++) {
@@ -76,6 +73,7 @@ public class Battlefield {
         }
         System.out.println(" ");
     }
+
     public void displayGameplayBattlefield() {
         System.out.println(" ");
         for (int i = 0; i < 12; i++) {
@@ -87,7 +85,7 @@ public class Battlefield {
         System.out.println(" ");
     }
 
-    public static void displayTwoBattlefields(char[][] this_battlefield,char[][] other_battlefield) {
+    public static void displayTwoBattlefields(char[][] this_battlefield, char[][] other_battlefield) {
         System.out.println("   Your battlefield\t\t\t\t Enemie's battlefield");
         for (int i = 0; i < 12; i++) {
             for (int j = 0; j < 12; j++) {
@@ -103,19 +101,17 @@ public class Battlefield {
         System.out.println("Legend: ocean = ~ | ship = O | destroyed cell of ship = X | missed shot = M");
         System.out.println();
     }
-    public void displayShipsNamesAndTheirCoordinates()
-    {
-        for (Ship ship: this.ShipsArray)
-        {
+
+    public void displayShipsNamesAndTheirCoordinates() {
+        for (Ship ship : this.ShipsArray) {
             ship.printShipName();
             ship.printShipCoordinates();
         }
     }
-    public int getAllShipsLength()
-    {
+
+    public int getAllShipsLength() {
         int sum_segments = 0;
-        for(Ship ship: ShipsArray)
-        {
+        for (Ship ship : ShipsArray) {
             sum_segments = sum_segments + ship.getShipCoordinates().size();
         }
         return sum_segments;
@@ -171,25 +167,17 @@ public class Battlefield {
             }
         }
     }
-
-    public static Point translateBoardCoordinatesToPointCoordinates(char row_index, char column_index)
-    {
-        int char_ascii = 65;
-        int number_ascii = 48;
-        HashMap<Character, Integer> rows = new HashMap<>(10);
-        HashMap<Character, Integer> column = new HashMap<>(10);
-        for (int i = 0; i < 10; i++) {
-            rows.put((char)char_ascii, i+1);
-            char_ascii++;
-            column.put((char)number_ascii, i+1);
-            number_ascii++;
-        }
-        // x rzad, y = kolumna
-        Point point_to_return = new Point();
-        point_to_return.x = rows.get(row_index);
-        point_to_return.y = column.get(column_index);
-
-        return point_to_return;
+    //public static String translatePointCoordinatesToStringCoordinates(Point point)
+    //    {
+    //        //J9 = coordynaty: 10,10
+    //        //The ASCII number for "J" is 74 and the ASCII number for "9" is 57.
+    //        // + 64 do x i + 47 do y
+    //        char row_index = (char) (point.x + 64);
+    //        char column_index = (char)(point.y + 47);
+    //        return ""+ row_index + column_index;
+    //    }
+    public static Point translateBoardCoordinatesToPointCoordinates(char row_index, char column_index) {
+        return new Point((int) row_index - 64, (int) column_index - 47);
 
     }
 
@@ -197,44 +185,45 @@ public class Battlefield {
         return Battlefield;
     }
 
-    public void receiveHit(char row_index, char column_index, boolean printMessage)
-    {
+    public PointWithInteger receiveHit(char row_index, char column_index, boolean printMessage, boolean play_sound) {
+        PointWithInteger pwi = new PointWithInteger();
         AudioPlayer2 audioPlayer2 = new AudioPlayer2();
         Point shot = translateBoardCoordinatesToPointCoordinates(row_index, column_index);
-        boolean areAllShipsIntact = true;
-
-        for (Ship ship : ShipsArray)
-        {
-            if(ship.getShipCoordinates().isEmpty())
-            {
+        for (Ship ship : ShipsArray) {
+            if (ship.getShipCoordinates().isEmpty()) {
                 continue;
             }
             // print message parameter
             Point shot_taken = ship.takeHit(shot, printMessage);
             // check shots
-            if(shot_taken.y != -1 && shot_taken.x != -1)
-            {
+            if (shot_taken.y != -1 && shot_taken.x != -1) {
                 // add coordinates
                 Battlefield[shot.x][shot.y] = 'X';
                 GameplayBattlefield[shot.x][shot.y] = 'X';
-                audioPlayer2.playHitSound();
-                areAllShipsIntact = false;
-                break;
+                if (play_sound) {
+                    audioPlayer2.playHitSound();
+                }
+                // set feedback for AI.
+                pwi.setPoint(shot);
+                pwi.setValue(ship.getShipLength());
+                return pwi;
             }
         }
-        if(areAllShipsIntact)
-        {
-            if(printMessage)
-            {
-                System.out.println("You missed!!");
-            }
-
-            // change board
-            Battlefield[shot.x][shot.y]= 'M';
-            GameplayBattlefield[shot.x][shot.y] = 'M';
-            // play sound
+        // update miss
+        if (printMessage) {
+            System.out.println("You missed!!");
+        }
+        // change board
+        Battlefield[shot.x][shot.y] = 'M';
+        GameplayBattlefield[shot.x][shot.y] = 'M';
+        // play sound
+        if (play_sound) {
             audioPlayer2.playMissSound();
         }
+        // return value of point (-1,-1)
+        pwi.setPoint(new Point(-1, -1));
+        pwi.setValue(-1);
+        return pwi;
     }
 
     public ArrayList<Ship> getShipsArray() {
@@ -245,15 +234,12 @@ public class Battlefield {
         ShipsArray = shipsArray;
     }
 
-    private void addRandomShips()
-    {
-        for (Ship ship: ShipsArray)
-        {
+    private void addRandomShips() {
+        for (Ship ship : ShipsArray) {
             boolean repeate = true;
-            while(repeate)
-            {
+            while (repeate) {
                 // count loop
-                counter_loops ++;
+                counter_loops++;
                 // starting point + orientation
                 Point random_starting_point = getRandomPointOnBoard();
                 char random_orientation = getRandomOrientation();
@@ -268,9 +254,8 @@ public class Battlefield {
                 HashMap<String, ArrayList<Integer>> coordinates_hashmap = translatePointsArrayToHashMap(full_points);
 
                 // validate ship placement
-                boolean isValid = Validators.validateShipPlacementForEnemy(coordinates_hashmap.get("rows"), coordinates_hashmap.get("columns"),Battlefield);
-                if(isValid)
-                {
+                boolean isValid = Validators.validateShipPlacementForEnemy(coordinates_hashmap.get("rows"), coordinates_hashmap.get("columns"), Battlefield);
+                if (isValid) {
                     // adjust the board
                     for (int j = 0; j < coordinates_hashmap.get("columns").size(); j++) {
                         Battlefield[coordinates_hashmap.get("rows").get(j)][coordinates_hashmap.get("columns").get(j)] = 'O';
@@ -284,6 +269,7 @@ public class Battlefield {
             }
         }
     }
+
     private Point getRandomPointOnBoard() {
         // x >= 1 and x <= 11 i to samo z y: y >= 1 i y <= 11
         Random random = new Random();
@@ -298,35 +284,33 @@ public class Battlefield {
         int random_index = rand.nextInt(2);
         return orientation[random_index];
     }
-    private ArrayList<Point> getOtherPoints(Point starting_point, char orientation, int ship_length)
-    {
+
+    private ArrayList<Point> getOtherPoints(Point starting_point, char orientation, int ship_length) {
         ArrayList<Point> additional_points = new ArrayList<>();
         int row_starting_point = starting_point.x;
         int column_starting_point = starting_point.y;
-        if(orientation == 'v')
-        {
+        if (orientation == 'v') {
             // get other coordinates vertical: same column different rows
             for (int i = 1; i < ship_length; i++) {
                 Point additional_point = new Point(row_starting_point + i, column_starting_point);
                 additional_points.add(additional_point);
             }
-        }
-        else
-        {
+        } else {
             for (int i = 1; i < ship_length; i++) {
-                Point additional_point = new Point(row_starting_point, column_starting_point +i);
+                Point additional_point = new Point(row_starting_point, column_starting_point + i);
                 additional_points.add(additional_point);
             }
         }
         return additional_points;
     }
-    private ArrayList<Point> connectPoints(Point starting_point, ArrayList<Point> additional_points)
-    {
+
+    private ArrayList<Point> connectPoints(Point starting_point, ArrayList<Point> additional_points) {
         ArrayList<Point> connected_point_list = new ArrayList<>();
         connected_point_list.add(starting_point);
         connected_point_list.addAll(additional_points);
         return connected_point_list;
     }
+
     private HashMap<String, ArrayList<Integer>> translatePointsArrayToHashMap(ArrayList<Point> points) {
         HashMap<String, ArrayList<Integer>> resultMap = new HashMap<>();
         ArrayList<Integer> rows = new ArrayList<>();
@@ -347,4 +331,15 @@ public class Battlefield {
         return GameplayBattlefield;
     }
 
+    //int char_ascii = 65;
+    //        int number_ascii = 48;
+    public static String translatePointCoordinatesToStringCoordinates(Point point)
+    {
+        //J9 = coordynaty: 10,10
+        //The ASCII number for "J" is 74 and the ASCII number for "9" is 57.
+        // + 64 do x i + 47 do y
+        char row_index = (char) (point.x + 64);
+        char column_index = (char)(point.y + 47);
+        return ""+ row_index + column_index;
+    }
 }
