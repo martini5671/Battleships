@@ -14,7 +14,7 @@ public class Game2 {
         ArrayList<Integer> shots_counter_mid_AI = new ArrayList<>();
         ArrayList<Integer> shots_counter_basic_AI = new ArrayList<>();
 
-        for (int i = 0; i < 10000; i++) {
+        for (int i = 0; i < 1000; i++) {
 
             int counter_1 = 0;
             int counter_2 =0;
@@ -31,7 +31,7 @@ public class Game2 {
                 String enemy_shot = mediumAI.getShot();
                 PointWithInteger feedback = playerB.receiveHit(enemy_shot.charAt(0), enemy_shot.charAt(1), false, false);
                 mediumAI.storeFeedback(feedback);
-                counter_1++;
+                counter_1 = counter_1 +1;
             }
             // save the number of shots before the end of the game
             shots_counter_mid_AI.add(counter_1);
@@ -40,20 +40,20 @@ public class Game2 {
             {
                 String shot = basicAI.getRandomShot();
                 enemyB.receiveHit(shot.charAt(0), shot.charAt(1),false, false);
-                counter_2++;
+                counter_2 = counter_2 +1;
             }
             // save the number of shots before the end of the game
             shots_counter_basic_AI.add(counter_2);
         }
         // get stats:
 
+        //get histograms:
+        HistogramPlotter.plotOverlappingHistograms(shots_counter_basic_AI, shots_counter_mid_AI, "Random AI", "MidAI");
+
         System.out.println("Stats for better AI: ");
         DescriptiveStats.displayDescriptiveStats(shots_counter_mid_AI);
         System.out.println("Stats for random AI: ");
         DescriptiveStats.displayDescriptiveStats(shots_counter_basic_AI);
-        //get histograms:
-        HistogramPlotter.plotOverlappingHistograms(shots_counter_basic_AI, shots_counter_mid_AI, "Random AI", "MidAI");
-
 
     }
 
